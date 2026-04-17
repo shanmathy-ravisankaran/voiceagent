@@ -1,0 +1,327 @@
+<style>
+.voiceagent-dock {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 9998;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+    pointer-events: none;
+}
+
+.voiceagent-dock > * {
+    pointer-events: auto;
+}
+
+.voiceagent-fab,
+.voiceagent-indicator,
+.voiceagent-overlay,
+.voiceagent-close,
+.voiceagent-conversation,
+.voiceagent-message {
+    font-family: system-ui, sans-serif;
+}
+
+.voiceagent-fab {
+    border: 1px solid rgba(255,255,255,0.10);
+    background: linear-gradient(180deg, rgba(18, 24, 39, 0.94), rgba(10, 14, 24, 0.96));
+    color: #f8fbff;
+    padding: 14px 18px;
+    border-radius: 999px;
+    font: 600 14px/1.2 system-ui, sans-serif;
+    cursor: pointer;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.28);
+    backdrop-filter: blur(18px);
+}
+
+.voiceagent-indicator {
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(10, 15, 28, 0.88);
+    color: #d9f7ff;
+    border: 1px solid rgba(126, 227, 255, 0.24);
+    font: 500 13px/1.3 system-ui, sans-serif;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+    display: none;
+    align-items: center;
+    gap: 8px;
+}
+
+.voiceagent-indicator::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #7ef5ff, #9d78ff);
+    box-shadow: 0 0 14px rgba(126, 245, 255, 0.45);
+}
+
+.voiceagent-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9997;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    background: rgba(5, 7, 14, 0.44);
+    backdrop-filter: blur(22px);
+    transition: opacity 220ms ease;
+}
+
+.voiceagent-overlay.active {
+    display: flex;
+}
+
+.voiceagent-overlay-panel {
+    width: min(92vw, 880px);
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+}
+
+.voiceagent-close {
+    position: fixed;
+    top: 22px;
+    right: 22px;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(12, 16, 27, 0.78);
+    color: #fff;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.voiceagent-conversation {
+    width: min(92vw, 760px);
+    max-height: min(48vh, 460px);
+    overflow-y: auto;
+    display: none;
+    flex-direction: column;
+    gap: 14px;
+    padding: 24px 12px 6px;
+    scrollbar-width: none;
+}
+
+.voiceagent-conversation.active {
+    display: flex;
+}
+
+.voiceagent-conversation::-webkit-scrollbar {
+    display: none;
+}
+
+.voiceagent-message-row {
+    display: flex;
+    width: 100%;
+}
+
+.voiceagent-message-row.user {
+    justify-content: flex-end;
+}
+
+.voiceagent-message-row.agent {
+    justify-content: flex-start;
+}
+
+.voiceagent-message {
+    max-width: min(78%, 560px);
+    border-radius: 24px;
+    padding: 14px 18px;
+    box-shadow: 0 18px 34px rgba(0,0,0,0.20);
+    backdrop-filter: blur(18px);
+}
+
+.voiceagent-message.user {
+    background: linear-gradient(180deg, rgba(123, 235, 255, 0.16), rgba(76, 116, 255, 0.14));
+    border: 1px solid rgba(126, 227, 255, 0.22);
+    color: #f6fbff;
+    border-bottom-right-radius: 8px;
+}
+
+.voiceagent-message.agent {
+    background: linear-gradient(180deg, rgba(22, 27, 42, 0.90), rgba(12, 15, 25, 0.94));
+    border: 1px solid rgba(255,255,255,0.10);
+    color: #eef3ff;
+    border-bottom-left-radius: 8px;
+}
+
+.voiceagent-message.thinking {
+    color: rgba(232, 239, 255, 0.82);
+}
+
+.voiceagent-message-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.74;
+}
+
+.voiceagent-message-text {
+    font: 500 17px/1.6 system-ui, sans-serif;
+}
+
+.voiceagent-status-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.voiceagent-text {
+    text-align: center;
+    color: #f9fbff;
+    font: 500 28px/1.45 system-ui, sans-serif;
+    max-width: 760px;
+    text-shadow: 0 0 20px rgba(103, 132, 255, 0.10);
+}
+
+.voiceagent-subtext {
+    text-align: center;
+    color: rgba(216, 222, 245, 0.86);
+    font: 400 15px/1.6 system-ui, sans-serif;
+}
+
+.voiceagent-orb-wrap {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.voiceagent-orb-wrap::before {
+    content: "";
+    position: absolute;
+    inset: -26px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    opacity: 0.72;
+}
+
+.voiceagent-orb {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 30% 30%, rgba(92, 234, 255, 0.45), transparent 28%),
+        radial-gradient(circle at 72% 30%, rgba(226, 103, 255, 0.36), transparent 30%),
+        radial-gradient(circle at 52% 72%, rgba(101, 97, 255, 0.30), transparent 32%),
+        radial-gradient(circle at 50% 50%, rgba(34, 39, 71, 0.96), rgba(8, 12, 24, 0.98));
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow:
+        0 0 34px rgba(117, 171, 255, 0.20),
+        0 0 90px rgba(177, 92, 255, 0.18),
+        inset 0 0 46px rgba(255,255,255,0.06);
+    position: relative;
+    animation: va-breathe 5.6s ease-in-out infinite;
+}
+
+.voiceagent-orb::before {
+    content: "";
+    position: absolute;
+    inset: 20px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.10);
+}
+
+.voiceagent-waves {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    gap: 5px;
+}
+
+.voiceagent-waves span {
+    width: 5px;
+    border-radius: 999px;
+    background: rgba(245,247,255,0.86);
+    animation: va-wave 1.2s ease-in-out infinite;
+}
+
+.voiceagent-waves span:nth-child(1) { height: 20px; animation-delay: 0.0s; }
+.voiceagent-waves span:nth-child(2) { height: 34px; animation-delay: 0.1s; }
+.voiceagent-waves span:nth-child(3) { height: 52px; animation-delay: 0.2s; }
+.voiceagent-waves span:nth-child(4) { height: 68px; animation-delay: 0.3s; }
+.voiceagent-waves span:nth-child(5) { height: 52px; animation-delay: 0.4s; }
+.voiceagent-waves span:nth-child(6) { height: 34px; animation-delay: 0.5s; }
+.voiceagent-waves span:nth-child(7) { height: 20px; animation-delay: 0.6s; }
+
+.voiceagent-overlay.listening .voiceagent-orb { animation: va-listening 1.1s ease-in-out infinite; }
+.voiceagent-overlay.listening .voiceagent-orb-wrap::before {
+    border-top-color: rgba(124, 236, 255, 0.72);
+    border-right-color: rgba(179, 112, 255, 0.54);
+    animation: va-spin 2.2s linear infinite;
+}
+.voiceagent-overlay.thinking .voiceagent-orb { animation: va-thinking 4.8s linear infinite; }
+.voiceagent-overlay.thinking .voiceagent-orb-wrap::before {
+    border-top-color: rgba(226, 124, 255, 0.68);
+    border-right-color: rgba(112, 146, 255, 0.50);
+    animation: va-spin 4.6s linear infinite;
+}
+.voiceagent-overlay.speaking .voiceagent-orb { animation: va-speaking 0.95s ease-in-out infinite; }
+.voiceagent-overlay.speaking .voiceagent-orb-wrap::before {
+    border-top-color: rgba(124, 236, 255, 0.76);
+    border-right-color: rgba(208, 132, 255, 0.62);
+    animation: va-spin 1.5s linear infinite;
+}
+
+@media (max-width: 900px) {
+    .voiceagent-dock {
+        right: 50%;
+        transform: translateX(50%);
+        align-items: stretch;
+    }
+    .voiceagent-indicator,
+    .voiceagent-fab {
+        width: min(92vw, 420px);
+    }
+    .voiceagent-overlay-panel {
+        width: min(96vw, 720px);
+        margin-bottom: 18px;
+    }
+    .voiceagent-conversation {
+        width: min(96vw, 720px);
+        max-height: min(44vh, 380px);
+    }
+    .voiceagent-message {
+        max-width: 88%;
+    }
+}
+
+@keyframes va-breathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes va-listening { 0%,100% { transform: scale(1); box-shadow: 0 0 40px rgba(110,211,255,0.35), 0 0 110px rgba(196,94,255,0.26), inset 0 0 45px rgba(255,255,255,0.08); } 50% { transform: scale(1.08); box-shadow: 0 0 72px rgba(110,211,255,0.48), 0 0 138px rgba(196,94,255,0.34), inset 0 0 55px rgba(255,255,255,0.14); } }
+@keyframes va-thinking { 0% { transform: rotate(0deg) scale(1.02); } 50% { transform: rotate(180deg) scale(1.05); } 100% { transform: rotate(360deg) scale(1.02); } }
+@keyframes va-speaking { 0%,100% { transform: scale(1.01); } 50% { transform: scale(1.07); } }
+@keyframes va-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes va-wave { 0%,100% { transform: scaleY(0.58); opacity: 0.5; } 50% { transform: scaleY(1.25); opacity: 1; } }
+</style>
+<div id="voiceagent-ui-root" class="voiceagent-dock">
+  <div class="voiceagent-indicator" id="voiceagent-indicator">Voice Active (Say 'Hey Agent')</div>
+  <button class="voiceagent-fab" id="voiceagent-fab">Enable Voice Mode</button>
+  <div class="voiceagent-overlay" id="voiceagent-overlay">
+    <button class="voiceagent-close" id="voiceagent-close" aria-label="Close">x</button>
+    <div class="voiceagent-overlay-panel">
+      <div class="voiceagent-conversation" id="voiceagent-conversation"></div>
+      <div class="voiceagent-status-wrap">
+        <div class="voiceagent-text" id="voiceagent-text">Say "Hey Agent" to start a conversation.</div>
+        <div class="voiceagent-subtext" id="voiceagent-subtext">The dashboard stays visible underneath while the assistant listens on top.</div>
+      </div>
+      <div class="voiceagent-orb-wrap">
+        <div class="voiceagent-orb">
+          <div class="voiceagent-waves"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
